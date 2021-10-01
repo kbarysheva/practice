@@ -1,5 +1,7 @@
 package com.tinkoff.practice;
 
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
@@ -30,8 +32,8 @@ public class CountryTest {
         givenRequest = given()
                 .baseUri(BASE_URL)
                 .basePath(BASE_PATH)
-                .port(8080);
-                //.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
+                .port(8080)
+                .filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
 
         token = givenRequest
                 .contentType(ContentType.JSON)
@@ -122,7 +124,7 @@ public class CountryTest {
     @Test
     public void shouldPostNewCountry() {
         // Пока нерабочий, так как нет понимания, как правильно создать Country: 139
-        String regionName = "Горноалтайск";
+        String regionName = "R" + System.currentTimeMillis();
         Region newRegion = new Region(regionName);
 
         int regionId = givenRequest
@@ -136,13 +138,19 @@ public class CountryTest {
 
         int countryId = 0;
         try {
-            Country newCountry = new Country();
+            String countryName = "C" + System.currentTimeMillis();
+            Region region = new Region();
+            region.setId(regionId);
+            region.setRegionName(regionName);
+            CountryDto newCountry = new CountryDto();
+            newCountry.setCountryName(countryName);
+            newCountry.setRegion(region);
             countryId = givenRequest
                     .auth()
                     .oauth2(token)
                     .when()
                     .body(newCountry)
-                    .post("country")
+                    .post("countries")
                     .then().statusCode(HttpStatus.SC_CREATED)
                     .extract().path("id");
 
@@ -154,7 +162,7 @@ public class CountryTest {
                     .auth()
                     .oauth2(token)
                     .when()
-                    .delete("country/" + countryId);
+                    .delete("countries/" + countryId);
         }
     }
 }
