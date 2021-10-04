@@ -9,14 +9,16 @@ public class Country {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
     @SequenceGenerator(name = "sequence_generator")
 
-    private int id;
-    private String country_name;
-    private int region_id;
+    private Integer id;
+    @Column(name = "country_name")
+    private String countryName;
+    private Integer region_id;
+
     public Country() {
     }
 
     public Country(String country_name, int region_id) {
-        this.country_name = country_name;
+        this.countryName = country_name;
         this.region_id = region_id;
     }
 
@@ -28,12 +30,12 @@ public class Country {
         this.id = id;
     }
 
-    public String getCountry_name() {
-        return country_name;
+    public String getCountryName() {
+        return countryName;
     }
 
-    public void setCountry_name(String country_name) {
-        this.country_name = country_name;
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
     }
 
     public int getRegion_id() {
@@ -49,11 +51,11 @@ public class Country {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Country country = (Country) o;
-        return id == country.id && region_id == country.region_id && Objects.equals(country_name, country.country_name);
+        return id == country.id && region_id == country.region_id && Objects.equals(countryName, country.countryName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country_name, region_id);
+        return Objects.hash(id, countryName, region_id);
     }
 }
